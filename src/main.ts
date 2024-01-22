@@ -8,9 +8,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('/api')
 
-  app.useGlobalPipes(
-    new ValidationPipe({ stopAtFirstError: true, whitelist: true }),
-  )
+  app.useGlobalPipes(new ValidationPipe({ stopAtFirstError: true }))
 
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get(Reflector), {

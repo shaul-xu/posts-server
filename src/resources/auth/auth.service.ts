@@ -19,7 +19,7 @@ export class AuthService {
     return `${redisKeyPrefix}${email}`
   }
 
-  async sendRegisterVerificationCode(to: string) {
+  async sendCode(to: string) {
     if (!isEmail(to)) {
       throw new BadRequestException('邮箱格式不正确')
     }
@@ -46,14 +46,14 @@ export class AuthService {
       throw new BadRequestException('验证码不正确')
     }
 
-    const user = await this.userService.findUser({ email: data.email })
+    const existUser = await this.userService.findUser({ email: data.email })
 
-    if (user) {
+    if (existUser) {
       throw new BadRequestException('用户已存在')
     }
 
+    const user = await this.userService.createUser(rest)
     await this.redisService.del(redisKey)
-
-    return this.userService.createUser(rest)
+    return user
   }
 }

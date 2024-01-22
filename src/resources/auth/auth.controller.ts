@@ -8,11 +8,11 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('code')
-  sendVerificationCode(@Body() data: { email: string }) {
+  sendCode(@Body() data: { email: string }) {
     if (!isEmail(data.email)) {
       throw new BadRequestException('邮箱格式不正确')
     }
-    return this.authService.sendRegisterVerificationCode(data.email)
+    return this.authService.sendCode(data.email)
   }
 
   @Post('register')
