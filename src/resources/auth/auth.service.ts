@@ -1,10 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { isEmail } from 'class-validator'
+import { Request } from 'express'
 import { generateRamdomString } from '../../utils/generate-ramdom-string'
+import { md5 } from '../../utils/md5'
 import { EmailService } from '../email/email.service'
 import { RedisService } from '../redis/redis.service'
 import { UserService } from '../user/user.service'
-import { RegisterDto } from './dto/auth.dto'
+import { LoginDto, RegisterDto } from './dto/auth.dto'
 
 @Injectable()
 export class AuthService {
@@ -14,7 +16,7 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  getRedisKey(email: string) {
+  private getRedisKey(email: string) {
     const redisKeyPrefix = 'registerCode_'
     return `${redisKeyPrefix}${email}`
   }
@@ -55,5 +57,19 @@ export class AuthService {
     const user = await this.userService.createUser(rest)
     await this.redisService.del(redisKey)
     return user
+  }
+
+  async login(data: LoginDto, req: Request) {
+    const existUser = await this.userService.findUser({
+      email: data.email,
+      password: md5(data.password),
+    })
+    if (!existUser) {
+      throw new BadRequestException('密码错误')
+    }
+    req.session.user = {
+      id: existUser.id,
+      isAdmin: existUser.isAdmin,
+    }
   }
 }

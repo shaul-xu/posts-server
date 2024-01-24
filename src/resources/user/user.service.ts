@@ -8,24 +8,24 @@ import { CreateUserDto } from './dto/create-user.dto'
 export class UserService {
   constructor(private prismaService: PrismaService) {}
 
-  createUser(data: CreateUserDto) {
-    return this.prismaService.user.create({
+  async createUser(data: CreateUserDto) {
+    const { password, ...rest } = await this.prismaService.user.create({
       data: {
         ...data,
-        password: md5(data.email),
-      },
-      select: {
-        id: true,
-        email: true,
-        nickname: true,
-        isAdmin: true,
+        password: md5(data.password),
       },
     })
+    return rest
   }
 
   async findUser(userWhereUniqueInput: Prisma.UserWhereUniqueInput) {
-    return this.prismaService.user.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: userWhereUniqueInput,
     })
+    if (user) {
+      const { password, ...rest } = user
+      return rest
+    }
+    return null
   }
 }
