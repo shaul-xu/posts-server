@@ -7,7 +7,7 @@ import { RedisClientType } from 'redis'
 import { AppModule } from './app.module'
 import { HttpExecptionFilter } from './filters/http-execption.filter'
 import { AuthGuard } from './guards/auth.guard'
-import { ResponseTransformerInterceptor } from './interceptors/response-transformer.interceptor'
+import { UnifiedResponseInterceptor } from './interceptors/unified-response.interceptor'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -43,7 +43,7 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector), {
       excludeExtraneousValues: true,
     }),
-    new ResponseTransformerInterceptor(),
+    new UnifiedResponseInterceptor(),
   )
 
   app.useGlobalFilters(new HttpExecptionFilter())

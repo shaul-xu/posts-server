@@ -7,9 +7,8 @@ import {
   Session,
 } from '@nestjs/common'
 import { isEmail } from 'class-validator'
-import { Request } from 'express'
-import { Session as ExpressSession } from 'express-session'
 import { Public } from '../../decorators/public.decorator'
+import { ExpressRequest, ExpressSession } from '../../types'
 import { AuthService } from './auth.service'
 import { LoginDto, RegisterDto } from './dto/auth.dto'
 
@@ -32,7 +31,7 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() data: LoginDto, @Req() req: Request) {
+  async login(@Body() data: LoginDto, @Req() req: ExpressRequest) {
     return this.authService.login(data, req)
   }
 

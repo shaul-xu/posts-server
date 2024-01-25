@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { isEmail } from 'class-validator'
-import { Request } from 'express'
+import { ExpressRequest } from '../../types'
 import { generateRamdomString } from '../../utils/generate-ramdom-string'
 import { md5 } from '../../utils/md5'
 import { EmailService } from '../email/email.service'
@@ -59,7 +59,7 @@ export class AuthService {
     return user
   }
 
-  async login(data: LoginDto, req: Request) {
+  async login(data: LoginDto, req: ExpressRequest) {
     const existUser = await this.userService.findUser({
       email: data.email,
       password: md5(data.password),
